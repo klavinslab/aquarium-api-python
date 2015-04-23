@@ -8,7 +8,7 @@ into the current directory to use it.
 
 ### Importing
 
-`from aquarium import AquariumAPI`
+    from aquarium import AquariumAPI
 
 ### Initializing the API object
 
@@ -16,9 +16,9 @@ this temporarily stores the location of the
 aquarium API url, your username, and your password so you only have to input
 it once.
 
-`api = AquariumAPI("http://bioturk.ee.washington.edu:3011/api", "bolten", "nt4kljdjFJFDSK4233lkjfADNF")`
+    api = AquariumAPI("http://bioturk.ee.washington.edu:3011/api", "bolten", "nt4kljdjFJFDSK4233lkjfADNF")`
 
-The first argument is the URL of the api - this comes in the format of "{base aquarium URL}/api". Make sure to use the testing server to validate your submissions if you're creating new samples/items/tasks!
+The first argument is the URL of the api - this comes in the format of `"{base aquarium URL}/api"`. Make sure to use the testing server to validate your submissions if you're creating new samples/items/tasks!
 
 The second argument is your aquarium username.
 
