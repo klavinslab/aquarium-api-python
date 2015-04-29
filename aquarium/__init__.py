@@ -10,9 +10,11 @@ class AquariumAPI(object):
 
         # TODO: Attempt a connection - test the url and key
 
-    def find(self, model, where_query):
+    def find(self, model, where_query=None):
         method = "find"
-        run_data = {"model": model, "where": where_query}
+        run_data = {"model": model}
+        if where_query is not None:
+            run_data["where"] = where_query
 
         return self._request(method, run_data)
 
@@ -47,6 +49,7 @@ class AquariumAPI(object):
         run = {"method": method, "args": args}
         data["run"] = run
 
+        print data
         r = requests.post(self.url, json=data)
         # TODO: validate request error code
         if r.status_code != 200:
