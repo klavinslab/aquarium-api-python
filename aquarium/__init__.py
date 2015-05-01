@@ -20,9 +20,12 @@ class AquariumAPI(object):
 
     def create(self, model, model_type, name, description, fields,
                project=None):
+        if project is None:
+            project = self.project
         method = "create"
-        run_data = {"model": model, "type": model_type, "name": name,
-                    "description": description, "fields": fields}
+        run_data = {"model": model, "type": model_type, "name": name, 
+                    "project": project,"description": description, 
+                    "fields": fields}
 
         return self._request(method, run_data)
 
