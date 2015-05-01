@@ -1,5 +1,4 @@
 import requests
-import json
 
 
 class AquariumAPI(object):
@@ -24,23 +23,24 @@ class AquariumAPI(object):
         if project is None:
             project = self.project
         method = "create"
-        run_data = {"model": model, "type": model_type, "name": name, 
-                    "project": project,"description": description, 
+        run_data = {"model": model, "type": model_type, "name": name,
+                    "project": project, "description": description,
                     "fields": fields}
 
         return self._request(method, run_data)
-    
+
     def submit_task(self, name_task, user_name_task, fields, project=None):
         if project is None:
-            project = self.project            
-        json_task_prototype=self.find("task_prototype",{"name": name_task })      
-        json_task_prototype_parsed = json.loads(json.dumps(json_task_prototype))
-        task_prototype_id=json_task_prototype_parsed["rows"][0]["id"]       
-        
+            project = self.project
+        json_task_prototype = self.find("task_prototype", {"name": name_task})
+        task_prototype_id = json_task_prototype["rows"][0]["id"]
+
         method = "create"
-        run_data = {"model": "task", "name": user_name_task, "status": "waiting", 
-                    "task_prototype_id": task_prototype_id,"specification": fields}
-        
+        run_data = {"model": "task", "name": user_name_task,
+                    "status": "waiting",
+                    "task_prototype_id": task_prototype_id,
+                    "specification": fields}
+
         return self._request(method, run_data)
 
     def drop_by_names(self, model, names):
@@ -66,7 +66,6 @@ class AquariumAPI(object):
         run = {"method": method, "args": args}
         data["run"] = run
 
-        print data
         r = requests.post(self.url, json=data)
         # TODO: validate request error code
         if r.status_code != 200:
