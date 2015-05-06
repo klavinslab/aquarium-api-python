@@ -1,4 +1,6 @@
 import requests
+import re
+import json
 
 
 class AquariumAPI(object):
@@ -58,6 +60,46 @@ class AquariumAPI(object):
     def modify(self, query_params):
         # TODO: Write once this is documented
         raise NotImplementedError("The 'modify' method has no API docs.")
+    
+    #####################################
+    ###########
+    ########### this section should be seperated from this file
+    ###########
+    
+    def sample_type_id(self, type):
+        #input string (e.g. "Fragment" returns its sample_type_id
+        json_sample_type_id=self.find("sample_type",{"Name": type})
+        
+        return json_sample_type_id["rows"][0]["id"]
+    
+    def find_sample_substring(self, type, regex_str_tofind):
+        #find based on a substring in name or description
+        
+        json_res=self.find("sample", 
+                           {"sample_type_id": self.sample_type_id(type)})        
+        samples=[]
+        pattern=re.compile(regex_str_tofind)
+        for i in json_res["rows"]:
+            if (pattern.search(json.dumps(i["name"])) or 
+                pattern.search(json.dumps(i["description"]))):
+            #if sub_name in i["name"]:
+                #print i
+                samples.append(i)
+                
+        return samples
+    
+    def find_primers(self, overhang_seq, anneal_seq):
+        primers=[]
+        for i in self.find("sample", 
+                           {"sample_type_id": self.sample_type_id("Primer")}
+                           )["rows"]:
+            if ((i["fields"]["Overhang Sequence"] == overhang_seq) and 
+                (i["fields"]["Anneal Sequence"] == anneal_seq)) :
+                primers.append(i)
+        return primers    
+        
+    ###########
+    ##################################### 
 
     def _request(self, method, args):
         data = {}
