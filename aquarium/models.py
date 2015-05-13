@@ -1,10 +1,9 @@
 # Classes for interacting with models that appear in all Aquarium servers
-from aquarium import AquariumAPI
 
 
 class AquariumModel(object):
-    def __init__(self, url, user, key):
-        self.api = AquariumAPI(url, user, key)
+    def __init__(self, api):
+        self.api = api
         return NotImplementedError
 
     def find(self, args):
