@@ -8,7 +8,13 @@ class AquariumAPI(object):
         self.key = key
         self.project = project
 
-        # TODO: Attempt a connection - test the url and key
+        # Attempt a connection - tests the url, login, and key
+        try:
+            test_request = self._request({}, {})
+        except requests.ConnectionError:
+            raise requests.ConnectionError("Could not connect to URL")
+        if test_request["result"] != "ok":
+            raise requests.ConnectionError("{}".format(test_request["errors"]))
 
     def find(self, model, where_query=None):
         method = "find"
