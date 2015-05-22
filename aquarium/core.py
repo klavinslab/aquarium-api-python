@@ -1,4 +1,7 @@
 import requests
+import re
+import json
+import primer
 
 
 class AquariumAPI(object):
@@ -81,3 +84,64 @@ class AquariumAPI(object):
             # TODO: validate result ("status": OK)
             # TODO: provide a useful response message?
             return json
+    
+    def sample_type_id(self, type):
+        # input string (e.g. "Fragment" returns its sample_type_id
+        json_sample_type_id = self.find("sample_type", {"Name": type})
+
+        return json_sample_type_id["rows"][0]["id"]
+
+    def find_sample_substring(self, type, regex_str_tofind):
+        # find based on a substring in name or description
+
+        json_res = self.find("sample",
+                             {"sample_type_id": self.sample_type_id(type)})
+        samples = []
+        pattern = re.compile(regex_str_tofind)
+        for i in json_res["rows"]:
+            name_matches = pattern.search(json.dumps(i["name"]))
+            description_matches = pattern.search(json.dumps(i["description"]))
+            if name_matches or description_matches:
+                samples.append(i)
+
+        return samples
+
+    def find_primers(self, overhang_seq, anneal_seq):
+        primers = []
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Primer")}
+                           )["rows"]:
+            overhang_match = i["fields"]["Overhang Sequence"] == str(overhang_seq)
+            anneal_match = i["fields"]["Anneal Sequence"] == str(anneal_seq)
+            if overhang_match and anneal_match:
+                primers.append(i)
+        return primers    
+    
+    def find_yeast_strain_id(self, strain_name):
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Yeast Strain"), 
+                            "name": strain_name}
+                           )["rows"]:
+            id = i["id"] 
+
+        return id
+    
+    def get_primer(self, name):
+        primers=[] 
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Primer"), 
+                            "name": name}
+                           )["rows"]:
+            primers.append(primer.primer(name, 
+                                  i["description"], 
+                                  i["fields"]["Overhang Sequence"], 
+                                  i["fields"]["Anneal Sequence"], 
+                                  i["fields"]["T Anneal"]
+                                  )
+                           ) 
+        if len(primers) == 1:
+            return primers[0]
+        else:
+            print "Error finding your primer"
+            return None   
+            
