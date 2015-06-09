@@ -25,7 +25,7 @@ class primer():
         
     def aquariumify(self, conn):
         #left_primer
-        has_primer=conn.find_primers(self.overhang_seq,self.anneal_seq)
+        has_primer=conn.find_primers(self.overhang_seq,self.anneal_seq, self.name)
         if has_primer:
             print "Primer is already in Aquarium! We'll proceed with: "
             print has_primer

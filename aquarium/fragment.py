@@ -3,7 +3,7 @@ Created on May 14, 2015
 
 @author: laura
 '''
-from aquarium import AquariumAPI
+
 
 class fragment():
     
@@ -83,6 +83,7 @@ class fragment():
     
     def make_it_aquarium(self, conn, fragment_id):
         #create Fragment construction task in Aquarium
+        print "/!\ not checking for yeast lysate...."
         self.create_fragment_construction(conn, fragment_id)
 
             
