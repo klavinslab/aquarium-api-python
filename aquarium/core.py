@@ -85,7 +85,15 @@ class AquariumAPI(object):
             # TODO: validate result ("status": OK)
             # TODO: provide a useful response message?
             return json
-    
+#############################################################    
+    def get_ecoli_plate_id(self, plasmid_id):
+        json_item=self.find("item", {"sample_id": plasmid_id})
+        try: 
+            return json_item["rows"][1]["id"]
+        except:
+            print "No E coli Plate of Plasmid "+str(plasmid_id)
+            return None
+
     def sample_type_id(self, type):
         # input string (e.g. "Fragment" returns its sample_type_id
         json_sample_type_id = self.find("sample_type", {"Name": type})
@@ -210,7 +218,10 @@ class AquariumAPI(object):
                             "name": fragment_name}
                            )["rows"]:
             f=i
+            break
         #not implemented the marker (because come back as None, restriction enzyme, nor seq_url
+        print fragment_name
+        print f
         fwd_primer=self.get_primer(f["fields"]["Forward Primer"])
         if not fwd_primer:
             fwd_primer=primer.primer('none', 'placeholder primer', '', '', 0)

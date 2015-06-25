@@ -22,6 +22,10 @@ class primer():
     def pymbtify(self):
         return pymbt.Primer(pymbt.DNA(self.anneal_seq), self.t_anneal, pymbt.DNA(self.overhang_seq), self.name, self.description)
 
+    def save(self, filename):
+        with open(filename, "a+") as myfile:
+            myfile.write("primer("+self.fwd_primer.name+", "+self.fwd_primer.description+", "+self.fwd_primer.overhang_seq+", "+self.fwd_primer.anneal_seq+", "+self.fwd_primer.t_anneal+")")          
+      
         
     def aquariumify(self, conn):
         #left_primer

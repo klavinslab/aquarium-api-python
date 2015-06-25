@@ -59,7 +59,20 @@ class plasmid():
         plasmid_id=self.aquariumify(conn)
         print conn.submit_task("Gibson Assembly", 
                                     "Gibson Assembly of "+self.name, 
-                                    {"fragments": list_fragments_id,
-                                     "plasmid": plasmid_id
+                                    {"fragments Fragment": list_fragments_id,
+                                     "plasmid Plasmid": plasmid_id
                                      }
                                     )
+        
+    def verify_it_aquarium(self, conn, list_primers_id, num_colonies):
+        plasmid_id=self.aquariumify(conn)
+        plate_id=conn.get_ecoli_plate_id(plasmid_id)             
+        print conn.submit_task("Plasmid Verification", 
+                                    "Plasmid verification of "+self.name, 
+                                    {"plate_ids E coli Plate of Plasmid": [plate_id],
+                                     "num_colonies": [num_colonies],
+                                     "primer_ids Primer": [list_primers_id],
+                                     "initials": conn.login[:2]                       
+                                     }
+                                    )
+        

@@ -28,6 +28,14 @@ class fragment():
     def __str__(self):
         return self.name
     
+    def save(self, filename):
+        self.fwd_primer.save(filename)
+        self.rev_primer.save(filename)
+        with open(filename, "a+") as myfile:
+            myfile.write("fragment("+self.name+", "+self.description+", "+self.length+", "+self.template+", "+self.fwd_primer+", "+self.rev_primer+", "+self.seq_url+", "+self.marker+")")
+        
+        
+    
     def aquariumify(self, conn):
         
         #is it in Aq already?
