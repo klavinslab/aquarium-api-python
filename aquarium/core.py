@@ -88,8 +88,14 @@ class AquariumAPI(object):
 #############################################################    
     def get_ecoli_plate_id(self, plasmid_id):
         json_item=self.find("item", {"sample_id": plasmid_id})
+        print ">>>>>>>>>>>>>>>>ECOLI PLATES??????>>>>>>>"
         try: 
-            return json_item["rows"][1]["id"]
+            if json_item["rows"][2]["object_type_id"]==365:
+                return json_item["rows"][2]["id"]
+            else:
+                print "/!\ ERROR getting e coli plate id for plasmid_id. Please debug it!"
+                print json_item
+                return None
         except:
             print "No E coli Plate of Plasmid "+str(plasmid_id)
             return None
