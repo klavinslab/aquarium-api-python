@@ -50,7 +50,7 @@ class yeast_strain():
             if self.integrant is not "":
                 params["Integrant"]=int(self.integrant)
             if self.plasmid is not "":
-                params["Plasmid "]=int(self.plasmid)
+                params["Plasmid"]=int(self.plasmid)
             if self.integrated_marker is not "":
                 params["Integrated Marker(s)"]=self.integrated_marker
             if self.plasmid_marker is not "":
@@ -58,9 +58,9 @@ class yeast_strain():
             if self.mating_type is not "":
                 params["Mating Type"]=self.mating_type
             if self.qc_primer1 is not "":
-                params["QC Primer1"]=int(self.qc_primer1)
+                params["QC Primer1 Primer"]=int(self.qc_primer1)
             if self.qc_primer2 is not "":
-                params["QC Primer2"]=int(self.qc_primer2)
+                params["QC Primer2 Primer"]=int(self.qc_primer2)
                 
             print params
                                 

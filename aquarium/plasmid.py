@@ -68,7 +68,7 @@ class plasmid():
         plasmid_id=self.aquariumify(conn)
         plate_id=conn.get_ecoli_plate_id(plasmid_id)             
         print conn.submit_task("Plasmid Verification", 
-                                    "Plasmid verification of "+self.name, 
+                                    "Plasmid Verification:: "+self.name, 
                                     {"plate_ids E coli Plate of Plasmid": [plate_id],
                                      "num_colonies": [num_colonies],
                                      "primer_ids Primer": [list_primers_id],

@@ -90,12 +90,13 @@ class AquariumAPI(object):
         json_item=self.find("item", {"sample_id": plasmid_id})
         print ">>>>>>>>>>>>>>>>ECOLI PLATES??????>>>>>>>"
         try: 
-            if json_item["rows"][2]["object_type_id"]==365:
-                return json_item["rows"][2]["id"]
-            else:
-                print "/!\ ERROR getting e coli plate id for plasmid_id. Please debug it!"
-                print json_item
-                return None
+            for row in json_item["rows"]:
+                if row["object_type_id"]==365:
+                    if row["id"] >0 :
+                        return row["id"]
+            print "/!\ ERROR getting e coli plate id for plasmid_id. Please debug it!"
+            print json_item
+            return None
         except:
             print "No E coli Plate of Plasmid "+str(plasmid_id)
             return None
