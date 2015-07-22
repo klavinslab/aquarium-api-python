@@ -3,6 +3,8 @@ import re
 import json
 import primer
 import fragment
+import yeast_strain
+import plasmid
 
 
 class AquariumAPI(object):
@@ -235,6 +237,40 @@ class AquariumAPI(object):
         rev_primer=self.get_primer(f["fields"]["Reverse Primer"])
         if not rev_primer:
             rev_primer=primer.primer('none', 'placeholder primer', '', '', 0)
+        seq="N/A"
+        if len(f["fields"]["Sequence"])>6:
+            seq=f["fields"]["Sequence"]
+            
+        if f:
+            print "Fragment "+f["name"]+" found with id="+str(f["id"])
+            return fragment.fragment(f["name"], 
+                            f["description"], 
+                            f["fields"]["Length"], 
+                            f["fields"]["Template"], 
+                            fwd_primer, 
+                            rev_primer,
+                            seq_url=seq)   
+        else:
+            print "Error finding your fragment "+fragment_name
+            return None 
+ 
+ 
+    def get_fragment_from_id(self, fragment_id):
+        f=[]
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Fragment"), 
+                            "id": fragment_id}
+                           )["rows"]:
+            f=i
+            break
+        #not implemented the marker (because come back as None, restriction enzyme, nor seq_url
+        #print f
+        fwd_primer=self.get_primer(f["fields"]["Forward Primer"])
+        if not fwd_primer:
+            fwd_primer=primer.primer('none', 'placeholder primer', '', '', 0)
+        rev_primer=self.get_primer(f["fields"]["Reverse Primer"])
+        if not rev_primer:
+            rev_primer=primer.primer('none', 'placeholder primer', '', '', 0)
             
         if f:
             print "Fragment "+f["name"]+" found with id="+str(f["id"])
@@ -245,8 +281,8 @@ class AquariumAPI(object):
                             fwd_primer, 
                             rev_primer)   
         else:
-            print "Error finding your fragment "+fragment_name
-            return None 
+            print "Error finding your fragment "+str(fragment_id)
+            return None  
         
     def get_fragment_sequence(self, fragment_name):
         f=[]
@@ -260,4 +296,46 @@ class AquariumAPI(object):
             return f["fields"]["Sequence"]  
         else:
             return None 
-            
+
+    def get_yeast_strain(self, yeast_name):
+        f=[]
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Yeast Strain"), 
+                            "name": yeast_name}
+                           )["rows"]:
+            f=i
+
+        if f:
+            return yeast_strain.yeast_strain(f["name"], 
+                                             f["description"], 
+                                             parent=f["fields"]["Parent"], 
+                                             integrant=f["fields"]["Integrant"], 
+                                             plasmid=f["fields"]["Plasmid"], 
+                                             integrated_marker=f["fields"]["Integrated Marker(s)"], 
+                                             plasmid_marker=f["fields"]["Plasmid Marker(s)"], 
+                                             mating_type=f["fields"]["Mating Type"], 
+                                             qc_primer1=f["fields"]["QC Primer1"], 
+                                             qc_primer2=f["fields"]["QC Primer2"]
+                                             )
+        else:
+            return None     
+
+    def get_plasmid(self, plasmid_name):
+        f=[]
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Plasmid"), 
+                            "name": plasmid_name}
+                           )["rows"]:
+            f=i
+
+        if f:
+            return plasmid.plasmid(f["name"], 
+                                   f["description"], 
+                                   f["fields"]["Sequence"], 
+                                   f["fields"]["Bacterial Marker"], 
+                                   f["fields"]["Yeast Marker"], 
+                                   f["fields"]["Length"], 
+                                   sequencing_primer_ids=f["fields"]["Sequencing_primer_ids"],
+                                   sequence_verification=f["fields"]["Sequence Verification"])
+        else:
+            return None          

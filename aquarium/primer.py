@@ -45,5 +45,12 @@ class primer():
                                "T Anneal": self.t_anneal}
                               )
             print json
-            primer_id=json["rows"][0]["id"]      
+            primer_id=json["rows"][0]["id"]   
+            
+            #order it
+            print conn.submit_task("Primer Order","Primer Order of "+self.name, 
+                                    {"primer_ids": [primer_id]
+                                     }
+                                    )
+               
         return primer_id
