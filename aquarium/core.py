@@ -185,7 +185,20 @@ class AquariumAPI(object):
         else:
             print plasmid_name+" not found in Aquarium"
             return False
-    
+    def find_plasmid_name(self, plasmid_id):
+        name=""
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Plasmid"), 
+                            "id": plasmid_id}
+                           )["rows"]:
+            name = i["name"] 
+
+        if name !="":    
+            return name
+        else:
+            print "No plasmid with id="+str(plasmid_id)+" found in Aquarium"
+            return False
+        
     def find_yeast_fragment_id(self, fragment_name):
         id=0
 
