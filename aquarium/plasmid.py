@@ -24,6 +24,7 @@ class plasmid():
         self.yeast_marker=yeast_marker
         self.length=length 
         self.sequencing_primer_ids=sequencing_primer_ids
+        self.standard_name=self.name+"("+self.bacterial_marker+"|"+self.yeast_marker+")"
         
     def __str__(self):
         return self.name 
