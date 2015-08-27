@@ -75,18 +75,21 @@ class yeast_strain():
             
         return yeast_id
     
-    def check_yeast_stock(self, conn, yeast_id):
+    def check_yeast_stock(self, conn, yeast_id, choose_frag=True):
         #should we use on in stock, if any?
 
         in_stock=conn.find("item", {"sample_id": yeast_id, "quantity": 1}) 
         if in_stock["rows"]:
-            print "I found the following record(s) of your yeast in stock! :" 
-            for idx, val in enumerate(in_stock["rows"]):  
-                print idx, val             
-            which_stock_item = input("Do you want to use any of the following fragment(s) or make a new one? (enter number -else- any letters) : ")      
-            if isinstance(which_stock_item, int):
-                print "There is nothing to do for me. Use yeast id %d, item %d" %(yeast_id,in_stock["rows"][which_stock_item]["id"])
-                return in_stock["rows"][which_stock_item]["id"]
+            if choose_frag:
+                print "I found the following record(s) of your yeast in stock! :" 
+                for idx, val in enumerate(in_stock["rows"]):  
+                    print idx, val             
+                which_stock_item = input("Do you want to use any of the following fragment(s) or make a new one? (enter number -else- any letters) : ")      
+                if isinstance(which_stock_item, int):
+                    print "There is nothing to do for me. Use yeast id %d, item %d" %(yeast_id,in_stock["rows"][which_stock_item]["id"])
+                    return in_stock["rows"][which_stock_item]["id"]
+            else:
+                return True
         else:
             #do nothing 
             print "The yeast is not in stock!"
