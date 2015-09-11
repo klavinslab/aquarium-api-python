@@ -252,8 +252,7 @@ class AquariumAPI(object):
             rev_primer=primer.primer('none', 'placeholder primer', '', '', 0)
         seq="N/A"
         if len(f["fields"]["Sequence"])>6:
-            seq=f["fields"]["Sequence"]
-            
+            seq=f["fields"]["Sequence"] 
         if f:
             print "Fragment "+f["name"]+" found with id="+str(f["id"])
             return fragment.fragment(f["name"], 
@@ -262,7 +261,8 @@ class AquariumAPI(object):
                             f["fields"]["Template"], 
                             fwd_primer, 
                             rev_primer,
-                            seq_url=seq)   
+                            seq_url=seq,
+                            marker=f["fields"]["Yeast Marker"])   
         else:
             print "Error finding your fragment "+fragment_name
             return None 
