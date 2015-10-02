@@ -87,8 +87,26 @@ class AquariumAPI(object):
             # TODO: validate result ("status": OK)
             # TODO: provide a useful response message?
             return json
-#############################################################    
+#############################################################  
+
+    def item_ids_by_sample(self, sample_id): 
+        item_ids=[] 
+        for item in self.find("item", {"sample_id": sample_id})["rows"]:
+            if item["quantity"]>0:
+                item_ids.append(item["id"])
+        return item_ids
+        
+    def isthere_sample_in_object(self, sample_id, object_name):  
+        object_id=self.find("object_type",{"name":object_name})["rows"][0]["id"]
+        if len(self.find("item", {"sample_id": sample_id,"object_type_id":object_id})["rows"])>0:
+            return True
+        else:
+            return False
+        
+        
+        
     def get_ecoli_plate_id(self, plasmid_id):
+        #do not use, use isthere_sample_in_object instead
         json_item=self.find("item", {"sample_id": plasmid_id})
         print ">>>>>>>>>>>>>>>>ECOLI PLATES??????>>>>>>>"
         try: 
@@ -100,7 +118,7 @@ class AquariumAPI(object):
             print json_item
             return None
         except:
-            print "No E coli Plate of Plasmid "+str(plasmid_id)
+            #print "No E coli Plate of Plasmid "+str(plasmid_id)
             return None
 
     def sample_type_id(self, type):
@@ -172,6 +190,26 @@ class AquariumAPI(object):
 
         return id
     
+    def find_yeast_strain_name(self, strain_id):
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Yeast Strain"), 
+                            "id": strain_id}
+                           )["rows"]:
+            return i["name"] 
+
+        return None 
+       
+    def find_all_user_yeast_strain_names(self, login_name):
+        user_id=self.find("user",{"login":login_name})["rows"][0]["id"]
+        names=[]
+        for i in self.find("sample",
+                           {"sample_type_id": self.sample_type_id("Yeast Strain"), 
+                           "user_id": user_id}
+                           )["rows"]:
+            names.append(i["name"])
+
+        return names
+    
     def find_plasmid_id(self, plasmid_name):
         id=0
         for i in self.find("sample",
@@ -210,7 +248,7 @@ class AquariumAPI(object):
         if id !=0:    
             return id
         else:
-            print fragment_name+" not found in Aquarium"
+            #print fragment_name+" not found in Aquarium"
             return False
 
     def get_primer(self, name):
@@ -229,7 +267,7 @@ class AquariumAPI(object):
         if len(primers) == 1:
             return primers[0]
         else:
-            print "Error finding your primer"
+            #print "Error finding your primer"
             return None   
         
            
@@ -242,8 +280,8 @@ class AquariumAPI(object):
             f=i
             break
         #not implemented the marker (because come back as None, restriction enzyme, nor seq_url
-        print fragment_name
-        print f
+        #print fragment_name
+        #print f
         fwd_primer=self.get_primer(f["fields"]["Forward Primer"])
         if not fwd_primer:
             fwd_primer=primer.primer('none', 'placeholder primer', '', '', 0)
@@ -254,7 +292,7 @@ class AquariumAPI(object):
         if len(f["fields"]["Sequence"])>6:
             seq=f["fields"]["Sequence"] 
         if f:
-            print "Fragment "+f["name"]+" found with id="+str(f["id"])
+            #print "Fragment "+f["name"]+" found with id="+str(f["id"])
             return fragment.fragment(f["name"], 
                             f["description"], 
                             f["fields"]["Length"], 
@@ -264,7 +302,7 @@ class AquariumAPI(object):
                             seq_url=seq,
                             marker=f["fields"]["Yeast Marker"])   
         else:
-            print "Error finding your fragment "+fragment_name
+            #print "Error finding your fragment "+fragment_name
             return None 
  
  
@@ -286,7 +324,7 @@ class AquariumAPI(object):
             rev_primer=primer.primer('none', 'placeholder primer', '', '', 0)
             
         if f:
-            print "Fragment "+f["name"]+" found with id="+str(f["id"])
+            #print "Fragment "+f["name"]+" found with id="+str(f["id"])
             return fragment.fragment(f["name"], 
                             f["description"], 
                             f["fields"]["Length"], 
@@ -294,7 +332,7 @@ class AquariumAPI(object):
                             fwd_primer, 
                             rev_primer)   
         else:
-            print "Error finding your fragment "+str(fragment_id)
+            #print "Error finding your fragment "+str(fragment_id)
             return None  
         
     def get_fragment_sequence(self, fragment_name):
@@ -351,4 +389,16 @@ class AquariumAPI(object):
                                    sequencing_primer_ids=f["fields"]["Sequencing_primer_ids"],
                                    sequence_verification=f["fields"]["Sequence Verification"])
         else:
-            return None          
+            return None   
+        
+    def find_metacol_id_task(self,task_id):               
+        for g in self.find("job", {'path':"aqualib/workflows/general/tasks_inputs.rb"})["rows"]:
+            for backtrace in g["backtrace"]:
+                try:
+                    task_ids_job= backtrace["rval"]["io_hash"]["task_ids"]
+                    if task_id in task_ids_job:
+                        metacol_id=g["metacol_id"]
+                        return metacol_id    
+                except KeyError, IndexError:
+                    pass 
+        return None  
