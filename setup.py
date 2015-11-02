@@ -11,9 +11,9 @@ config = {
     'author_email': 'nbolten _at_ gmail',
     'version': '0.1.0',
     'install_requires': ['argparse', 'requests'],
-    'packages': ['aquarium'],
+    'packages': ['aquariumapi'],
     'scripts': [],
-    'name': 'aquarium',
+    'name': 'aquariumapi',
     'license': 'Copyright University of Washington'
 }
 
