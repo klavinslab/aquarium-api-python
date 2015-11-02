@@ -1,14 +1,14 @@
 # aquarium-api-python
 Python library for interacting with the aquarium web API
 
-# Usage
+# Installation
 
-There's no setup.py yet, so copy the aquarium directory (contains __init__.py)
-into the current directory to use it.
+`cd directory/that/contains/setup.py`
+`pip install .`
 
 ### Importing
 
-    from aquarium import AquariumAPI
+    from aquariumapi import AquariumAPI
 
 ### Initializing the API object
 
