@@ -1,4 +1,4 @@
-from aquarium import AquariumAPI
+from aquariumapi import AquariumAPI
 import re
 import json
 
