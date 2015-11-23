@@ -29,7 +29,7 @@ class AquariumAPI(object):
         if test_request["result"] != "ok":
             raise requests.ConnectionError("{}".format(test_request["errors"]))
 
-    def find(self, model, where_query=None):
+    def find(self, model, where_query=None, limit=None):
         """Find entries in a model matching a query on table columns.
 
         :param model: Model in the database to search.
@@ -37,24 +37,27 @@ class AquariumAPI(object):
         :param where_query: A query of column: comparator key-value pairs,
                             e.g. {'id': 5}
         :type where_query: dict
+        :param limit: Limits the number of queries to return (synonymous with
+                     SQL LIMIT).
+        :type limit: int
 
         """
         method = "find"
-        run_data = {"model": model}
+        run_args = {"model": model}
         if where_query is not None:
-            run_data["where"] = where_query
+            run_args["where"] = where_query
+        if limit is not None:
+            run_args["limit"] = limit
 
-        return self._request(method, run_data)
+        return self._request(method, run_args)
 
-    def create(self, model, model_type, name, description, fields,
-               project=None):
-        """Create new database entries.
+    def create_sample(self, sample_type, name, description, fields,
+                      project=None):
+        """Create a new sample (adds new row to Sample table).
 
-        :param model: Model in which to create a new entry, e.g. 'Primer'.
-        :type model: str
-        :param model_type: Type of model to which the model belongs, e.g.
-                           'sample' or 'item'.
-        :type model_type: str
+        :param sample_type: The name of the 'SampleType', e.g. 'PCR' or
+                            'Fragment'.
+        :type sample_type: str
         :param name: Name of the new database entry (e.g. a primer name).
         :type name: str
         :param description: A description of the new entry.
@@ -70,14 +73,14 @@ class AquariumAPI(object):
         if project is None:
             project = self.project
         method = "create"
-        run_data = {"model": model, "type": model_type, "name": name,
+        run_args = {"model": "sample", "type": sample_type, "name": name,
                     "project": project, "description": description,
                     "fields": fields}
 
-        return self._request(method, run_data)
+        return self._request(method, run_args)
 
-    def submit_task(self, name_task, user_name_task, fields, project=None):
-        """Creates a database entry for Tasks.
+    def create_task(self, name, task_type, specification, project=None):
+        """Creates a new task (adds new row to Tasks table).
 
         :param name_task: Task type name (e.g. 'PCR')
         :type name_task: str
@@ -93,16 +96,17 @@ class AquariumAPI(object):
         """
         if project is None:
             project = self.project
-        json_task_prototype = self.find("task_prototype", {"name": name_task})
+        json_task_prototype = self.find("task_prototype", {"name": task_type})
         task_prototype_id = json_task_prototype["rows"][0]["id"]
 
         method = "create"
-        run_data = {"model": "task", "name": user_name_task,
+        run_args = {"model": "task",
+                    "name": name,
                     "status": "waiting",
                     "task_prototype_id": task_prototype_id,
-                    "specification": fields}
+                    "specification": specification}
 
-        return self._request(method, run_data)
+        return self._request(method, run_args)
 
     def drop_by_names(self, model, names):
         """Drop database entries by name.
@@ -114,9 +118,9 @@ class AquariumAPI(object):
 
         """
         method = "drop"
-        run_data = {"model": model, "names": names}
+        run_args = {"model": model, "names": names}
 
-        return self._request(method, run_data)
+        return self._request(method, run_args)
 
     def drop_by_ids(self, model, ids):
         """Drop database entries by ID.
@@ -128,9 +132,9 @@ class AquariumAPI(object):
 
         """
         method = "drop"
-        run_data = {"model": model, "ids": ids}
+        run_args = {"model": model, "ids": ids}
 
-        return self._request(method, run_data)
+        return self._request(method, run_args)
 
     def modify(self, query_params):
         """Not yet implemented."""
