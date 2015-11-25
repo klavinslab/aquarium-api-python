@@ -3,7 +3,7 @@ import json
 
 
 class SampleModel(object):
-    '''Accesses samples via the API.'''
+    '''Accessor for specific sample types.'''
     def __init__(self, api, sample_type):
         '''
         :param api: An instance of the Aquarium API client.
@@ -12,14 +12,6 @@ class SampleModel(object):
                             is used to look up the info (including fields) for
                             this sample type.
         :type sample_type: str
-        :param fields: A list of lists of field-type pairs (used solely as
-                       information for the user) for the sample type, e.g.
-                       for a Primer it may be [['Overhang', 'string'],
-                       ['Anneal', 'string']].
-        :type fields: list
-        :param id_: The id of the sample type (used solely as information for
-                    the user).
-        :type id_: int
 
         '''
         self.api = api
@@ -90,14 +82,7 @@ class SampleModel(object):
         :type ids: list
 
         '''
-        if not any([names, ids]) or all([names, ids]):
-            raise Exception('Must supply either the names or ids agument.')
-
-        if names is not None:
-            self.api.drop_by_names('sample', names)
-
-        if ids is not None:
-            self.api.drop_by_ids('sample', ids)
+        self.api.drop('sample', names=names, ids=ids)
 
     def modify(self, args):
         raise NotImplementedError
@@ -107,7 +92,17 @@ class SampleModel(object):
 
 
 class TaskModel(object):
+    '''Accessor for specific task types.'''
     def __init__(self, api, task_type):
+        '''
+        :param api: An instance of the Aquarium API client.
+        :type api: aquariumapi.AquariumAPI
+        :param task_type: The exact name of the task type. This is used to look
+                          up the info (including the task prototype) for this
+                          sample type.
+        :type task_type: str
+
+        '''
         self.api = api
         self.task_type = task_type
 
@@ -124,6 +119,16 @@ class TaskModel(object):
                 'prototype': self.prototype}
 
     def find(self, where=None, limit=None):
+        '''Finds tasks of this type using the same syntax as the built-in
+        AquariumAPI methods.
+
+        :param where: Query for selecting subsets of this task type. Input type
+                      is identical to that for AquariumAPI.find
+        :type where: dict
+        :param limit: Limits the number of returned rows to this number.
+        :type limit:
+
+        '''
         if where is None:
             where = {}
 
@@ -134,10 +139,30 @@ class TaskModel(object):
         return self.api.find('task', where=where, limit=limit)
 
     def create(self, name, specification):
+        '''Creates a new row of this sample type in the database.
+
+        :param name: Name of the sample.
+        :type name: str
+        :param specification: Arguments for this task. The arguments required
+                              are listed in the task prototype and can be
+                              viewed using the .info() method.
+        :type fields: dict
+
+        '''
+
         return self.api.create_task(name, self.task_type, specification)
 
-    def drop(self):
-        raise NotImplementedError
+    def drop(self, names=None, ids=None):
+        '''Drop entries using either a list of sample IDs or a list of names
+        (only names or ids may be set).
+
+        :param names: A list of names (strings) of the samples to drop.
+        :type names: list
+        :param ids: A list of IDs (ints) of the samples to drop.
+        :type ids: list
+
+        '''
+        self.api.drop('task', names=names, ids=ids)
 
     def modify(self, args):
         raise NotImplementedError

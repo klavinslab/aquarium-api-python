@@ -99,32 +99,30 @@ class AquariumAPI(object):
 
         return self._request(method, run_args)
 
-    def drop_by_names(self, model, names):
-        '''Drop database entries by name.
+    def drop(self, model, names=None, ids=None):
+        '''Drop database entries by name. Either names or ids must be
+        specified.
 
         :param model: Model from which to drop entries.
         :type model: str
         :param names: A list of entry names (unique identifiers) to drop.
         :type names: list
-
-        '''
-        method = 'drop'
-        run_args = {'model': model, 'names': names}
-
-        return self._request(method, run_args)
-
-    def drop_by_ids(self, model, ids):
-        '''Drop database entries by ID.
-
-        :param model: Model from which to drop entries.
-        :type model: str
-        :param ids: A list of entry IDs (unique identifiers) to drop.
+        :param ids: A list of IDs in to drop.
         :type ids: list
 
         '''
-        method = 'drop'
-        run_args = {'model': model, 'ids': ids}
+        run_args = {'model': model}
 
+        if not any([names, ids]):
+            raise Exception('Must supply a names and/or ids agument.')
+
+        if names is not None:
+            run_args['names'] = names
+
+        if ids is not None:
+            run_args['ids'] = ids
+
+        method = 'drop'
         return self._request(method, run_args)
 
     def modify(self, query_params):
