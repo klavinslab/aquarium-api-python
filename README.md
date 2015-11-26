@@ -46,22 +46,29 @@ These two approaches are discussed below.
 
 ##### arguments:
 `model`:  defines the database model you want to query - for example, "sample" or "item".
+
 `where`: An optional argument. If not supplied, returns all the rows for the model. If supplied, should be a dictionary that defines the exact query you want to run (see the API documentation to view the syntax required).
 
 #### create
 
 ##### arguments:
 `model`:  Database model in which the new entry will be created - e.g. "sample".
+
 `model_type`: Type within the model to be generated - e.g. if the `model` is "sample" a `model_type` could be "Primer".
+
 `name`:  Name of the new entry.
+
 `description`:  Description of the new entry.
+
 `fields`:  A dictionary of fields of the new entry - specific to each type within the model. [Click here](http://bioturk.ee.washington.edu:3011/sample_types) for a list of fields required for sample types.
 
 #### drop_by_names
 
 ##### arguments:
 `model`:  Database model in which the new entry will be deleted - e.g. "sample".
+
 `names`:  A list of names for the entries you want to delete
+
 `ids`:  A list of IDs for the entries you want to delete
 
 ### Using the models module to make requests
